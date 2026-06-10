@@ -12,11 +12,6 @@ jobs:
     steps:
       - name: Hide Sensitive Inputs
         uses: levibostian/action-hide-sensitive-inputs@v1
-
-      - name: get current time for build date
-        id: time
-        run: |
-          echo "timestamp=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
           
       - name: Checkout Fork
         uses: actions/checkout@v4
@@ -29,6 +24,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |
           gh repo sync ${{ github.repository }} -b ${{ github.ref_name }}
+
+      - name: get current time for build date
+        id: time
+        run: |
+          echo "timestamp=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
 
   build-debug:
     name: Assemble Debug APK
