@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: echo
-        run: echo "${{ needs.sync-fork.outputs.outputs.timestamp }}"
+        run: echo "${{ needs.sync-fork.outputs.timestamp }}"
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -71,8 +71,8 @@ jobs:
         uses: softprops/action-gh-release@v3.0.0
         with:
           token: ${{ secrets.MY_SYNC_PAT }}
-          tag_name: nethunter-${{ needs.sync-fork.outputs.outputs.timestamp }}
-          name: Nethunter app ${{ needs.sync-fork.outputs.outputs.timestamp }}
+          tag_name: nethunter-${{ needs.sync-fork.outputs.timestamp }}
+          name: Nethunter app ${{ needs.sync-fork.outputs.timestamp }}
           files: |
             build/outputs/apk/debug/*.apk
 
@@ -114,6 +114,6 @@ jobs:
         uses: softprops/action-gh-release@v3.0.0
         with:
           token: ${{ secrets.MY_SYNC_PAT }}
-          tag_name: nethunter-${{ needs.sync-fork.outputs.outputs.timestamp }}
+          tag_name: nethunter-${{ needs.sync-fork.outputs.timestamp }}
           files: |
             build/outputs/apk/release/*.apk
