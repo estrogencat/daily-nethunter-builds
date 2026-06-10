@@ -8,6 +8,8 @@ on:
 jobs:
   sync-fork:
     runs-on: ubuntu-latest
+    outputs:
+      build_time: ${{ steps.time.outputs.timestamp }}
     permissions:
       contents: write
       
@@ -18,7 +20,6 @@ jobs:
           fetch-depth: 0 
         
       - name: Sync Fork with Upstream
-        # The gh CLI uses this built-in variable automatically
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |
@@ -65,8 +66,8 @@ jobs:
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v3.0.0
         with:
-          tag_name: nethunter-${{ steps.time.outputs.timestamp }}
-          name: Nethunter app ${{ steps.time.outputs.timestamp }}
+          tag_name: nethunter-${{ needs.sync-fork.outputs.build_time }}
+          name: Nethunter app ${{ needs.sync-fork.outputs.build_time }}
           files: |
             build/outputs/apk/debug/*.apk
 
@@ -106,6 +107,6 @@ jobs:
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v3.0.0
         with:
-          tag_name: nethunter-${{ steps.time.outputs.timestamp }}
+          tag_name: nethunter-${{ needs.sync-fork.outputs.build_time }}
           files: |
             build/outputs/apk/release/*.apk
