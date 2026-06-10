@@ -8,6 +8,8 @@ on:
 jobs:
   sync-fork:
     runs-on: ubuntu-latest
+    with:
+      token: ${{ secrets.MY_SYNC_PAT }}
     outputs:
       build_time: ${{ steps.time.outputs.timestamp }}
     permissions:
@@ -34,6 +36,8 @@ jobs:
     name: Assemble Debug APK
     runs-on: ubuntu-latest
     needs: sync-fork
+    with:
+      token: ${{ secrets.MY_SYNC_PAT }}
     permissions:
       contents: write
 
@@ -77,6 +81,8 @@ jobs:
     name: Assemble Release APK
     runs-on: ubuntu-latest
     needs: sync-fork
+    with:
+      token: ${{ secrets.MY_SYNC_PAT }}
     permissions:
       contents: write
 
