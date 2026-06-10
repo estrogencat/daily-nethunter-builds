@@ -12,8 +12,10 @@ jobs:
       timestamp: ${{ steps.time.outputs.timestamp }}
     permissions:
       contents: write
-      
     steps:
+      - name: Hide Sensitive Inputs
+        uses: levibostian/action-hide-sensitive-inputs@v1
+        
       - name: Checkout Fork
         uses: actions/checkout@v4
         with:
@@ -39,6 +41,9 @@ jobs:
       contents: write
 
     steps:
+      - name: Hide Sensitive Inputs
+        uses: levibostian/action-hide-sensitive-inputs@v1
+        
       - name: echo
         run: echo "${{ needs.sync-fork.outputs.timestamp }}"
       - name: Checkout
@@ -84,6 +89,9 @@ jobs:
       contents: write
 
     steps:
+      - name: Hide Sensitive Inputs
+        uses: levibostian/action-hide-sensitive-inputs@v1
+        
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -110,10 +118,27 @@ jobs:
       - name: Assemble release APK
         run: ./gradlew assembleRelease
 
+      - name: fetch keystore
+        env:
+          SIGNING_KEY_URL: ${{ secrets.KEYSTORE_URL }}
+        run: |
+          # download the keystore
+          wget -q "$SIGNING_KEY_URL" -O nethunter.keystore
+        
+      - name: sign release apk
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: build/outputs/apk/release
+          signingKeyBase64: nethunter.keystore
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v3.0.0
         with:
           token: ${{ secrets.MY_SYNC_PAT }}
           tag_name: nethunter-${{ needs.sync-fork.outputs.timestamp }}
           files: |
-            build/outputs/apk/release/*.apk
+            ${{steps.sign_app.outputs.signedReleaseFile}}
