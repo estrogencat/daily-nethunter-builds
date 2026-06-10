@@ -9,7 +9,7 @@ jobs:
   sync-fork:
     runs-on: ubuntu-latest
     outputs:
-      build_time: ${{ steps.time.outputs.timestamp }}
+      timestamp: ${{ steps.time.outputs.timestamp }}
     permissions:
       contents: write
       
