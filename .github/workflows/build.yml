@@ -12,7 +12,12 @@ jobs:
     steps:
       - name: Hide Sensitive Inputs
         uses: levibostian/action-hide-sensitive-inputs@v1
-        
+
+      - name: get current time for build date
+        id: time
+        run: |
+          echo "timestamp=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
+          
       - name: Checkout Fork
         uses: actions/checkout@v4
         with:
@@ -61,8 +66,8 @@ jobs:
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v3.0.0
         with:
-          tag_name: nethunter-${{ github.run_number }}
-          name: Nethunter app ${{ github.run_number }}
+          tag_name: nethunter-${{ steps.time.outputs.timestamp }}
+          name: Nethunter app ${{ steps.time.outputs.timestamp }}
           files: |
             build/outputs/apk/debug/*.apk
 
@@ -102,6 +107,6 @@ jobs:
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v3.0.0
         with:
-          tag_name: nethunter-${{ github.run_number }}
+          tag_name: nethunter-${{ steps.time.outputs.timestamp }}
           files: |
             build/outputs/apk/release/*.apk
