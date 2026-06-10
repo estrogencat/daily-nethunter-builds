@@ -2,12 +2,32 @@ name: Build
 
 on:
   schedule:
-    # Runs at 00:00 UTC every single day
     - cron: '0 0 * * *'
-  # Allows you to manually trigger the build from the Actions tab
   workflow_dispatch: 
 
+permissions:
+  contents: write 
+  
 jobs:
+  sync-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+          
+      - name: Hide Sensitive Inputs
+        uses: levibostian/action-hide-sensitive-inputs@v1
+        
+      - name: Sync Fork with Upstream
+        # The gh CLI uses this built-in variable automatically
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        run: |
+          gh repo sync ${{ github.repository }} -b ${{ github.ref_name }}
+
   build-debug:
     name: Assemble Debug APK
     runs-on: ubuntu-latest
