@@ -117,24 +117,51 @@ jobs:
 
       - name: Assemble release APK
         run: ./gradlew assembleRelease
-
-      - name: fetch keystore
+        
+      - name: fetch keystore and sign
         env:
-          SIGNING_KEY_URL: ${{ secrets.KEYSTORE_URL }}
+          SIGNING_KEY_URL: ${{ secrets.MY_KEYSTORE_URL }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
-          # download the keystore
+          set -e # stop the script if any command fails
+          
+          echo "fetching keystore..."
           wget -q "$SIGNING_KEY_URL" -O nethunter.keystore
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;29.0.3"
+          
+          # make sure we are using the newest build tools, not the old ones
+          BUILD_TOOLS=$(ls -d $ANDROID_HOME/build-tools/* | tail -n 1)
+          echo "using build tools at: $BUILD_TOOLS"
+          
+          # debug the file sizes before signing
+          ls -lh nethunter.keystore
+          ls -lh build/outputs/apk/release/app-release-unsigned.apk
+          
+          echo "starting sign process..."
+          $BUILD_TOOLS/apksigner sign --ks nethunter.keystore \
+            --ks-key-alias ur_alias \
+            --ks-pass pass:$SIGNING_KEY_PASSWORD \
+            --key-pass pass:$SIGNING_KEY_PASSWORD \
+            --verbose \
+            build/outputs/apk/release/app-release-unsigned.apk
+            
+          echo "signing complete!"
+#      - name: fetch keystore
+#        env:
+#          SIGNING_KEY_URL: ${{ secrets.KEYSTORE_URL }}
+#        run: |
+#          # download the keystore
+#          wget -q "$SIGNING_KEY_URL" -O nethunter.keystore
+#          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;29.0.3"
 
-      - name: sign release apk
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app
-        with:
-          releaseDirectory: build/outputs/apk/release
-          signingKeyBase64: nethunter.keystore
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+#      - name: sign release apk
+#        uses: r0adkll/sign-android-release@v1
+#        id: sign_app
+#        with:
+#          releaseDirectory: build/outputs/apk/release
+#          signingKeyBase64: nethunter.keystore
+#          alias: ${{ secrets.ALIAS }}
+#          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+#          keyPassword: ${{ secrets.KEY_PASSWORD }}
           
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v3.0.0
