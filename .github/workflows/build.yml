@@ -171,4 +171,4 @@ jobs:
           token: ${{ secrets.MY_SYNC_PAT }}
           tag_name: nethunter-${{ needs.sync-fork.outputs.timestamp }}
           files: |
-            ${{steps.sign_app.outputs.signedReleaseFile}}
+            build/outputs/apk/release/*.apk
