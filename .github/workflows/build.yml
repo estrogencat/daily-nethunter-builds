@@ -30,6 +30,8 @@ jobs:
 
   build-debug:
     name: Assemble Debug APK
+    needs: sync-fork
+    if: always()
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -67,7 +69,6 @@ jobs:
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v3.0.0
         with:
-          body_path: changelog.txt
           tag_name: nethunter-${{ steps.time.outputs.timestamp }}
           name: Nethunter app ${{ steps.time.outputs.timestamp }}
           files: |
@@ -75,6 +76,8 @@ jobs:
 
   build-release:
     name: Assemble Release APK
+    needs: sync-fork
+    if: always()
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -107,8 +110,6 @@ jobs:
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v3.0.0
         with:
-          body_path: changelog.txt
           tag_name: nethunter-${{ steps.time.outputs.timestamp }}
-          name: Nethunter app ${{ steps.time.outputs.timestamp }}
           files: |
             build/outputs/apk/release/*.apk
