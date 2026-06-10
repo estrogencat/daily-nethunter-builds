@@ -135,7 +135,7 @@ jobs:
           
           # debug the file sizes before signing
           ls -lh nethunter.keystore
-          ls -lh build/outputs/apk/release/*.apk
+          ls -lh build/outputs/apk/release/daily-nethunter-builds-release-unsigned.apk
           
           echo "starting sign process..."
           $BUILD_TOOLS/apksigner sign --ks nethunter.keystore \
@@ -143,7 +143,7 @@ jobs:
             --ks-pass pass:$SIGNING_KEY_PASSWORD \
             --key-pass pass:$SIGNING_KEY_PASSWORD \
             --verbose \
-            build/outputs/apk/release/*.apk
+            build/outputs/apk/release/daily-nethunter-builds-release-unsigned.apk
             
           echo "signing complete!"
           
