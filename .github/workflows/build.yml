@@ -21,7 +21,7 @@ jobs:
         
       - name: Sync Fork with Upstream
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GH_TOKEN: ${{ secrets.MY_SYNC_PAT }}
         run: |
           gh repo sync ${{ github.repository }} -b ${{ github.ref_name }}
 
@@ -33,6 +33,7 @@ jobs:
   build-debug:
     name: Assemble Debug APK
     runs-on: ubuntu-latest
+    needs: sync-fork
     permissions:
       contents: write
 
@@ -66,6 +67,7 @@ jobs:
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v3.0.0
         with:
+          token: ${{ secrets.MY_SYNC_PAT }}
           tag_name: nethunter-${{ needs.sync-fork.outputs.outputs.timestamp }}
           name: Nethunter app ${{ needs.sync-fork.outputs.outputs.timestamp }}
           files: |
@@ -74,6 +76,7 @@ jobs:
   build-release:
     name: Assemble Release APK
     runs-on: ubuntu-latest
+    needs: sync-fork
     permissions:
       contents: write
 
@@ -105,6 +108,7 @@ jobs:
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v3.0.0
         with:
+          token: ${{ secrets.MY_SYNC_PAT }}
           tag_name: nethunter-${{ needs.sync-fork.outputs.outputs.timestamp }}
           files: |
             build/outputs/apk/release/*.apk
