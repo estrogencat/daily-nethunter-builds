@@ -124,7 +124,8 @@ jobs:
         run: |
           # download the keystore
           wget -q "$SIGNING_KEY_URL" -O nethunter.keystore
-        
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;29.0.3"
+
       - name: sign release apk
         uses: r0adkll/sign-android-release@v1
         id: sign_app
