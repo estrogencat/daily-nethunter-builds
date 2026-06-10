@@ -1,7 +1,11 @@
 name: Build
 
 on:
- workflow_dispatch:
+  schedule:
+    # Runs at 00:00 UTC every single day
+    - cron: '0 0 * * *'
+  # Allows you to manually trigger the build from the Actions tab
+  workflow_dispatch: 
 
 jobs:
   build-debug:
@@ -34,13 +38,20 @@ jobs:
 
       - name: Assemble debug APK
         run: ./gradlew assembleDebug
-
-      - name: Upload debug APK
-        uses: actions/upload-artifact@v4
+          
+      - name: get current time for build date
+        id: time
+        run: |
+          echo "timestamp=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
+          
+      - name: Upload to GitHub Releases
+        uses: softprops/action-gh-release@v3.0.0
         with:
-          name: debug-apk
-          path: build/outputs/apk/debug/*.apk
-          retention-days: 7
+          body_path: changelog.txt
+          tag_name: nethunter-${{ steps.time.outputs.timestamp }}
+          name: Nethunter app ${{ steps.time.outputs.timestamp }}
+          files: |
+            build/outputs/apk/debug/*.apk
 
   build-release:
     name: Assemble Release APK
@@ -73,9 +84,11 @@ jobs:
       - name: Assemble release APK
         run: ./gradlew assembleRelease
 
-      - name: Upload release APK
-        uses: actions/upload-artifact@v4
+      - name: Upload to GitHub Releases
+        uses: softprops/action-gh-release@v3.0.0
         with:
-          name: release-apk
-          path: build/outputs/apk/release/*.apk
-          retention-days: 7
+          body_path: changelog.txt
+          tag_name: nethunter-${{ steps.time.outputs.timestamp }}
+          name: Nethunter app ${{ steps.time.outputs.timestamp }}
+          files: |
+            build/outputs/apk/release/*.apk
