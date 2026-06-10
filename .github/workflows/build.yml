@@ -120,7 +120,7 @@ jobs:
         
       - name: fetch keystore and sign
         env:
-          SIGNING_KEY_URL: ${{ secrets.MY_KEYSTORE_URL }}
+          SIGNING_KEY_URL: ${{ secrets.KEYSTORE_URL }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
           set -e # stop the script if any command fails
@@ -145,6 +145,7 @@ jobs:
             build/outputs/apk/release/app-release-unsigned.apk
             
           echo "signing complete!"
+          
 #      - name: fetch keystore
 #        env:
 #          SIGNING_KEY_URL: ${{ secrets.KEYSTORE_URL }}
