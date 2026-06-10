@@ -122,6 +122,7 @@ jobs:
         env:
           SIGNING_KEY_URL: ${{ secrets.KEYSTORE_URL }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          ALIAS: ${{ secrets.ALIAS }}
         run: |
           set -e # stop the script if any command fails
           
@@ -134,15 +135,15 @@ jobs:
           
           # debug the file sizes before signing
           ls -lh nethunter.keystore
-          ls -lh build/outputs/apk/release/app-release-unsigned.apk
+          ls -lh build/outputs/apk/release/kali-nethunter-app-release-unsigned.apk
           
           echo "starting sign process..."
           $BUILD_TOOLS/apksigner sign --ks nethunter.keystore \
-            --ks-key-alias ur_alias \
+            --ks-key-alias $ALIAS \
             --ks-pass pass:$SIGNING_KEY_PASSWORD \
             --key-pass pass:$SIGNING_KEY_PASSWORD \
             --verbose \
-            build/outputs/apk/release/app-release-unsigned.apk
+            build/outputs/apk/release/kali-nethunter-app-release-unsigned.apk
             
           echo "signing complete!"
           
