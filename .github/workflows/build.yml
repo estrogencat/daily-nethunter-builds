@@ -19,7 +19,7 @@ jobs:
       - name: Sync Fork with Upstream
         # The gh CLI uses this built-in variable automatically
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |
           gh repo sync ${{ github.repository }} -b ${{ github.ref_name }}
 
