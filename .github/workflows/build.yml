@@ -32,8 +32,6 @@ jobs:
 
   build-debug:
     name: Assemble Debug APK
-    needs: sync-fork
-    if: always()
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -73,8 +71,6 @@ jobs:
 
   build-release:
     name: Assemble Release APK
-    needs: sync-fork
-    if: always()
     runs-on: ubuntu-latest
     permissions:
       contents: write
